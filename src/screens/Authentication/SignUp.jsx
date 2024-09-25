@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { auth, db } from "../../firebaseConfig";
 import { useAuth } from '../../authContext';
 import TermsAndConditions from '../../components/Policy'; 
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -12,24 +12,21 @@ function SignUp() {
   const [lastName, setLastName] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
-  const { currentUser } = useAuth(); // Access currentUser from context
+  const { currentUser } = useAuth(); 
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    console.log(auth)
     if (password !== confirmPassword && termsAccepted) {
       setError("Passwords do not match");
       return;
     }
     try {
-      // Create user with Firebase Auth
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
 
-      // Save user data to Firestore
-      await db.collection("users").doc(user.uid).set({
+      await db.collection("clients").doc(user.uid).set({
         email: user.email,
         firstName,
         lastName,
@@ -37,7 +34,6 @@ function SignUp() {
       });
 
       localStorage.setItem('isAuthenticated', 'true');
-
       console.log("User signed up successfully");
     } catch (error) {
       setError(error.message);
@@ -145,9 +141,12 @@ function SignUp() {
             Sign Up
           </button>
         </form>
+
+        <p className="text-center mt-4 text-sm">
+          Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Sign in here</Link>.
+        </p>
       </div>
 
-      {/* Terms and Conditions Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-11/12 max-w-md relative">

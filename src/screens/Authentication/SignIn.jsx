@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { auth } from "../../firebaseConfig"; // Import the necessary Firebase auth functions
-import { useAuth } from '../../authContext'; // Assuming you have an auth context to manage user state
-import { Navigate } from "react-router-dom";
+import { auth } from "../../firebaseConfig"; 
+import { useAuth } from '../../authContext';
+import { Navigate, Link } from "react-router-dom";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  
+
   const { currentUser } = useAuth();
 
   const handleLogin = async (e) => {
@@ -66,6 +66,10 @@ function SignIn() {
             Login
           </button>
         </form>
+
+        <p className="text-center mt-4 text-sm">
+          Don't have an account? <Link to="/signup" className="text-blue-500 hover:underline">Sign up here</Link>.
+        </p>
       </div>
     </div>
   );

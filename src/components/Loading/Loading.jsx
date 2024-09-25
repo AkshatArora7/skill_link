@@ -1,10 +1,9 @@
 import React from "react";
-import "./Loading.scss";
 import loadingGif from "../../Assets/gif/loading.gif";
 
 const Loading = () => {
   return (
-    <div className="loading-container">
+    <div className="flex justify-center items-center h-screen">
       <img src={loadingGif} alt="Loading..." />
     </div>
   );
