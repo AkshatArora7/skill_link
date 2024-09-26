@@ -1,12 +1,14 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./authContext";
-import SignUp from "./screens/Authentication/SignUp";
-import SignIn from "./screens/Authentication/SignIn";
-import Dashboard from "./screens/Dashboard/Dashboard";
+import SignUp from "./Screens/Authentication/SignUp";
+import SignIn from "./Screens/Authentication/SignIn";
+import Dashboard from "./Screens/Dashboard/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
-import Booking from "./screens/Booking/Booking";
-import ErrorPage from "./components/ErrorPage/ErrorPage"
+import Booking from "./Screens/Booking/Booking";
+import ErrorPage from "./Components/ErrorPage/ErrorPage"
+import Profile from "./Screens/Profile/Profile";
+import History from "./Screens/History/History";
 
 function App() {
   return (
@@ -20,7 +22,9 @@ function App() {
           {/* Protected Routes */}
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/booking" element={<Booking />} />
+            <Route path="/bookings" element={<Booking />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           <Route path="*" element={<ErrorPage />} />

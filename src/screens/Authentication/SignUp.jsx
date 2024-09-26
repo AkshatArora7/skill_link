@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { auth, db } from "../../firebaseConfig";
 import { useAuth } from '../../authContext';
-import TermsAndConditions from '../../components/Policy'; 
-import { Navigate, Link } from "react-router-dom";
+import TermsAndConditions from '../../Components/Policy'; 
+import { Navigate, Link, useNavigate } from "react-router-dom";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -15,6 +15,7 @@ function SignUp() {
   const [isModalOpen, setIsModalOpen] = useState(false); 
 
   const { currentUser } = useAuth(); 
+  const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -26,7 +27,7 @@ function SignUp() {
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
       const user = userCredential.user;
 
-      await db.collection("clients").doc(user.uid).set({
+      await db.collection("users").doc(user.uid).set({
         email: user.email,
         firstName,
         lastName,
@@ -35,6 +36,7 @@ function SignUp() {
 
       localStorage.setItem('isAuthenticated', 'true');
       console.log("User signed up successfully");
+      navigate("/");
     } catch (error) {
       setError(error.message);
     }
