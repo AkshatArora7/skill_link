@@ -1,70 +1,77 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../firebaseConfig"; // Firestore DB import
+import { db } from "../../firebaseConfig"; 
 import Navbar from "../../Components/NavBar/NavBar";
-import BookingModal from "../../Components/BookingModal/BookingModal"; // Import the Booking Modal
+import BookingModal from "../../Components/BookingModal/BookingModal";
+import Loading from "../../Components/Loading/Loading";
 
 const Dashboard = () => {
   const [clients, setClients] = useState([]);
   const [professions, setProfessions] = useState([]);
-  const [activeTab, setActiveTab] = useState("professional"); // State to track active tab
-  const [selectedProfession, setSelectedProfession] = useState(null); // State to track selected profession
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const [selectedClient, setSelectedClient] = useState(null); // State for the selected client
+  const [activeTab, setActiveTab] = useState("professional");
+  const [selectedProfession, setSelectedProfession] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch client data from Firestore
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const clientSnapshot = await db.collection("clients").get();
-        const clientData = [];
-        clientSnapshot.forEach((doc) => {
-          const data = doc.data();
-          const activeRoles = data.roles.filter(
-            (role) => role.isActive === true
-          );
+useEffect(() => {
+  const fetchClients = async () => {
+    setLoading(true); // Set loading to true before fetching
+    try {
+      const clientSnapshot = await db.collection("clients").get();
+      const clientData = [];
+      clientSnapshot.forEach((doc) => {
+        const data = doc.data();
+        const activeRoles = data.roles.filter(
+          (role) => role.isActive === true
+        );
 
-          // Push client data only if there are active roles
-          if (activeRoles.length > 0) {
-            clientData.push({
-              id: doc.id,
-              firstName: data.firstName,
-              lastName: data.lastName,
-              profilePic: data.profilePic,
-              email: data.email,
-              avgRating: data.avgRating,
-              activeRoles: activeRoles, // Store only the active roles
-            });
-          }
-        });
-        setClients(clientData); // Store client data in state
-      } catch (error) {
-        console.error("Error fetching clients:", error);
-      }
-    };
-
-    fetchClients();
-  }, []);
-
-  // Fetch professions from Firestore
-  useEffect(() => {
-    const fetchProfessions = async () => {
-      try {
-        const professionSnapshot = await db.collection("professions").get();
-        const professionData = professionSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().name, // Assuming the profession document has a name field
-        }));
-        setProfessions(professionData); // Store profession data in state
-        if (professionData.length > 0) {
-          setSelectedProfession(professionData[0].name); // Set the first profession as the default selected
+        // Push client data only if there are active roles
+        if (activeRoles.length > 0) {
+          clientData.push({
+            id: doc.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            profilePic: data.profilePic,
+            email: data.email,
+            avgRating: data.avgRating,
+            activeRoles: activeRoles, // Store only the active roles
+          });
         }
-      } catch (error) {
-        console.error("Error fetching professions:", error);
-      }
-    };
+      });
+      setClients(clientData); // Store client data in state
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching
+    }
+  };
 
-    fetchProfessions();
-  }, []);
+  fetchClients();
+}, []);
+
+useEffect(() => {
+  const fetchProfessions = async () => {
+    setLoading(true); // Set loading to true before fetching
+    try {
+      const professionSnapshot = await db.collection("professions").get();
+      const professionData = professionSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name, // Assuming the profession document has a name field
+      }));
+      setProfessions(professionData); // Store profession data in state
+      if (professionData.length > 0) {
+        setSelectedProfession(professionData[0].name); // Set the first profession as the default selected
+      }
+    } catch (error) {
+      console.error("Error fetching professions:", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching
+    }
+  };
+
+  fetchProfessions();
+}, []);
 
   // Function to handle tab change
   const handleTabChange = (tab) => {
@@ -87,8 +94,7 @@ const Dashboard = () => {
       <Navbar tab={"home"} />
       <h1 className="text-3xl font-bold text-center my-6">Dashboard</h1>
 
-      {/* Tab Navigation */}
-      <div className="flex justify-end px-4">
+      {loading?<Loading/>:<div className="flex justify-end px-4">
         <div className="flex items-center space-x-4">
           <span className="font-medium">Browse by:</span>
           <button
@@ -113,8 +119,8 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
+}
 
-      {/* Profession Buttons */}
       {activeTab === "profession" && professions.length > 0 && (
         <div className="flex justify-center space-x-4 mt-4">
           {professions.map((profession) => (

@@ -1,48 +1,61 @@
-import React, { useState } from "react";
-import "./BookingModal.css"; // Import your CSS styles
+import React, { useState } from 'react';
+import { db, auth } from '../../firebaseConfig'; // Firestore and Auth import
+import './BookingModal.css'; // Import your CSS styles
 
 const BookingModal = ({ isOpen, onRequestClose, client }) => {
-  const [selectedProfession, setSelectedProfession] = useState(
-    client.activeRoles[0]?.roleName || ""
-  );
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedProfession, setSelectedProfession] = useState(client.activeRoles[0]?.roleName || '');
+  const [selectedDate, setSelectedDate] = useState('');
   const serviceFeePercentage = 0.05; // 5%
   const taxPercentage = 0.13; // 13%
 
-  // Calculate the total cost including service fee and tax
   const calculateTotalCost = (rate) => {
-    if (isNaN(rate)) {
-      console.error("Invalid rate provided:", rate); // Log the invalid rate
-      return { total: 0, serviceFee: 0, tax: 0 }; // Return default values if rate is invalid
-    }
-
-    console.log(typeof rate);
     const serviceFee = parseInt(rate) * serviceFeePercentage;
-    const subtotal = parseInt(rate) + serviceFee; // Add service fee to the original rate
-    const tax = subtotal * taxPercentage; // Calculate tax on the subtotal
-    const total = subtotal + tax; // Add tax to the subtotal to get the total
+    const subtotal = parseInt(rate) + serviceFee; 
+    const tax = subtotal * taxPercentage;
+    const total = subtotal + tax;
     return { total, serviceFee, tax };
   };
 
-  const handleBookingSubmit = (e) => {
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
-    // Add logic to handle booking submission (e.g., save to Firestore)
-    onRequestClose(); // Close modal after submitting
+
+    const user = auth.currentUser; // Get the currently logged-in user
+    if (!user) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    const selectedRole = client.activeRoles.find(role => role.roleName === selectedProfession);
+    const selectedRate = selectedRole?.rate || 0; 
+    const { total, serviceFee, tax } = calculateTotalCost(selectedRate);
+
+    const bookingData = {
+      userId: user.uid, // Save the user ID
+      clientId: client.id,
+      clientName: `${client.firstName} ${client.lastName}`,
+      selectedProfession,
+      date: selectedDate,
+      rate: parseInt(selectedRate),
+      serviceFee: parseInt(serviceFee.toFixed(2)), // Save the service fee
+      tax: parseInt(tax.toFixed(2)), // Save the tax amount
+      total: parseInt(total.toFixed(2)), // Save the total cost
+      createdAt: new Date().toLocaleString(),
+    };
+
+    try {
+      await db.collection('bookings').add(bookingData);
+      console.log("Booking created successfully:", bookingData);
+      onRequestClose();
+    } catch (error) {
+      console.error("Error creating booking:", error);
+    }
   };
 
   if (!isOpen) return null; // Don't render anything if not open
 
-  // Find the selected role's rate
-  const selectedRole = client.activeRoles.find(
-    (role) => role.roleName === selectedProfession
-  );
+  const selectedRole = client.activeRoles.find(role => role.roleName === selectedProfession);
   const selectedRate = selectedRole?.rate || 0; // Use a default rate of 0 if undefined
-  const { total, serviceFee, tax } = calculateTotalCost(selectedRate); // Calculate total based on selected profession
-
-  // Log total, service fee, and tax for debugging
-  console.log("Total:", total);
-  console.log("Service Fee:", serviceFee);
-  console.log("Tax:", tax);
+  const { total, serviceFee, tax } = calculateTotalCost(selectedRate);
 
   return (
     <div className="modal-overlay">
@@ -58,9 +71,7 @@ const BookingModal = ({ isOpen, onRequestClose, client }) => {
 
         <form onSubmit={handleBookingSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Select Profession
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Select Profession</label>
             <select
               value={selectedProfession}
               onChange={(e) => setSelectedProfession(e.target.value)}
@@ -75,9 +86,7 @@ const BookingModal = ({ isOpen, onRequestClose, client }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Select Date and Time
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Select Date and Time</label>
             <input
               type="datetime-local"
               value={selectedDate}
@@ -89,9 +98,7 @@ const BookingModal = ({ isOpen, onRequestClose, client }) => {
 
           {/* Receipt Section */}
           <div className="mt-4 border-t pt-4">
-            <h3 className="text-md font-semibold text-gray-700 mb-2">
-              Receipt
-            </h3>
+            <h3 className="text-md font-semibold text-gray-700 mb-2">Receipt</h3>
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-700">{selectedProfession}:</span>
               <span className="text-gray-500">${selectedRate}</span>
@@ -117,6 +124,8 @@ const BookingModal = ({ isOpen, onRequestClose, client }) => {
             Confirm Booking
           </button>
         </form>
+
+        {/* Cancel Button */}
         <button
           onClick={onRequestClose}
           className="mt-4 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 focus:outline-none"

@@ -92,13 +92,14 @@ const Profile = () => {
     }
   };
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
 
   return (
     <div className="bg-gray-100 min-h-screen">
       <NavBar tab={'profile'} />
+      {loading? <Loading/> :
       <div className="max-w-2xl mx-auto p-6 bg-white shadow rounded-md mt-6">
         <h2 className="text-2xl font-semibold mb-4">Profile</h2>
 
@@ -168,7 +169,7 @@ const Profile = () => {
         >
           Save Changes
         </button>
-      </div>
+      </div>}
     </div>
   );
 };
