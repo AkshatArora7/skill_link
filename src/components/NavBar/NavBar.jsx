@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebaseConfig';
-import logo from '../../Assets/logo.png'
+import logo from '../../assets/logo.png'
 
 const Navbar = ({tab}) => {
   const [selectedTab, setSelectedTab] = useState(tab);
