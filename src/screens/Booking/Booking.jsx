@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../../Components/NavBar/NavBar';
+import Navbar from '../../components/NavBar/NavBar';
 import { db, auth } from '../../firebaseConfig'; // Import Firebase Firestore and Auth
 
 const Booking = () => {

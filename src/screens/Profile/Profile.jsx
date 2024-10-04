@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { auth, db } from '../../firebaseConfig';
 import { useAuth } from '../../authContext';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import Loading from '../../Components/Loading/Loading';
-import NavBar from '../../Components/NavBar/NavBar';
+import Loading from '../../components/Loading/Loading';
+import NavBar from '../../components/NavBar/NavBar';
 
 
 const Profile = () => {

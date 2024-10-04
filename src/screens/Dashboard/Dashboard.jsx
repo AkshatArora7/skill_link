@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig"; 
-import Navbar from "../../Components/NavBar/NavBar";
-import BookingModal from "../../Components/BookingModal/BookingModal";
-import Loading from "../../Components/Loading/Loading";
+import Navbar from "../../components/NavBar/NavBar";
+import BookingModal from "../../components/BookingModal/BookingModal";
+import Loading from "../../components/Loading/Loading";
 
 const Dashboard = () => {
   const [clients, setClients] = useState([]);
