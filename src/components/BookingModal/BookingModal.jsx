@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { db, auth } from '../../firebaseConfig'; // Firestore and Auth import
-import './BookingModal.css'; // Import your CSS styles
+import { db, auth } from '../../firebaseConfig'; 
+import './BookingModal.css'; 
 
 const BookingModal = ({ isOpen, onRequestClose, client }) => {
   const [selectedProfession, setSelectedProfession] = useState(client.activeRoles[0]?.roleName || '');

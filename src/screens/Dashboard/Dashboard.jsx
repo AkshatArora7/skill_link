@@ -139,70 +139,73 @@ useEffect(() => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 mt-6">
-        {filteredClients.length > 0 ? (
-          filteredClients.map((client) => (
-            <div key={client.id} className="bg-white p-4 shadow-md rounded-lg">
-              <img
-                src={client.profilePic}
-                alt={`${client.firstName} ${client.lastName}`}
-                className="h-24 w-24 rounded-full mx-auto mb-4"
-              />
-              <h2 className="text-lg font-semibold text-center">
-                {client.firstName} {client.lastName}
-              </h2>
-              <p className="text-sm text-center text-gray-500">
-                {client.email}
-              </p>
-              <p className="text-sm text-center text-yellow-500">
-                Avg Rating: {client.avgRating}
-              </p>
-
-              <div className="mt-4">
-                <h3 className="text-md font-semibold text-gray-700 mb-2">
-                  Active Services:
-                </h3>
-                {/* Show all roles if 'professional' tab is selected, otherwise show only selected profession */}
-                {activeTab === "professional"
-                  ? client.activeRoles.map((role, index) => (
-                      <div
-                        key={index}
-                        className="flex justify-between items-center mb-2"
-                      >
-                        <span className="text-gray-700">{role.roleName}</span>
-                        <span className="text-gray-500">${role.rate}/hr</span>
-                      </div>
-                    ))
-                  : client.activeRoles
-                      .filter((role) => role.roleName === selectedProfession)
-                      .map((role, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center mb-2"
-                        >
-                          <span className="text-gray-700">{role.roleName}</span>
-                          <span className="text-gray-500">${role.rate}/hr</span>
-                        </div>
-                      ))}
-              </div>
-
-              <button
-                className="mt-4 w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-                onClick={() => {
-                  setSelectedClient(client);
-                  setIsModalOpen(true);
-                }}
-              >
-                Book Now
-              </button>
-            </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-500">
-            No active clients available at the moment.
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 mt-6">
+  {filteredClients.length > 0 ? (
+    filteredClients.map((client) => (
+      <div
+        key={client.id}
+        className="bg-white p-4 shadow-md rounded-lg flex flex-col justify-between h-full"
+      >
+        <div>
+          <img
+            src={client.profilePic}
+            alt={`${client.firstName} ${client.lastName}`}
+            className="h-24 w-24 rounded-full mx-auto mb-4"
+          />
+          <h2 className="text-lg font-semibold text-center">
+            {client.firstName} {client.lastName}
+          </h2>
+          <p className="text-sm text-center text-gray-500">{client.email}</p>
+          <p className="text-sm text-center text-yellow-500">
+            Avg Rating: {client.avgRating}
           </p>
-        )}
+
+          <div className="mt-4">
+            <h3 className="text-md font-semibold text-gray-700 mb-2">
+              Active Services:
+            </h3>
+            {/* Show all roles if 'professional' tab is selected, otherwise show only selected profession */}
+            {activeTab === "professional"
+              ? client.activeRoles.map((role, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center mb-2"
+                  >
+                    <span className="text-gray-700">{role.roleName}</span>
+                    <span className="text-gray-500">${role.rate}/hr</span>
+                  </div>
+                ))
+              : client.activeRoles
+                  .filter((role) => role.roleName === selectedProfession)
+                  .map((role, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center mb-2"
+                    >
+                      <span className="text-gray-700">{role.roleName}</span>
+                      <span className="text-gray-500">${role.rate}/hr</span>
+                    </div>
+                  ))}
+          </div>
+        </div>
+
+        <button
+          className="mt-4 w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+          onClick={() => {
+            setSelectedClient(client);
+            setIsModalOpen(true);
+          }}
+        >
+          Book Now
+        </button>
       </div>
+    ))
+  ) : (
+    <p className="text-center text-gray-500">
+      No active clients available at the moment.
+    </p>
+  )}
+</div>
 
       {selectedClient && (
         <BookingModal

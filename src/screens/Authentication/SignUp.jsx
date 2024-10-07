@@ -32,6 +32,8 @@ function SignUp() {
         firstName,
         lastName,
         password,
+        profilePic: 'https://firebasestorage.googleapis.com/v0/b/skilllinkwebapp.appspot.com/o/defaultProfilePic%2F1%20avatar1.jpeg?alt=media&token=6d55a5e1-3bed-4fff-be5a-ff2764caf084',
+        firstLogin: new Date().toLocaleDateString() 
       });
 
       localStorage.setItem('isAuthenticated', 'true');
