@@ -30,16 +30,17 @@ const BookingModal = ({ isOpen, onRequestClose, client }) => {
     const { total, serviceFee, tax } = calculateTotalCost(selectedRate);
 
     const bookingData = {
-      userId: user.uid, // Save the user ID
+      userId: user.uid, 
       clientId: client.id,
       clientName: `${client.firstName} ${client.lastName}`,
       selectedProfession,
       date: selectedDate,
       rate: parseInt(selectedRate),
-      serviceFee: parseInt(serviceFee.toFixed(2)), // Save the service fee
-      tax: parseInt(tax.toFixed(2)), // Save the tax amount
-      total: parseInt(total.toFixed(2)), // Save the total cost
+      serviceFee: parseInt(serviceFee.toFixed(2)),
+      tax: parseInt(tax.toFixed(2)), 
+      total: parseInt(total.toFixed(2)), 
       createdAt: new Date().toLocaleString(),
+      status: "pending" 
     };
 
     try {
