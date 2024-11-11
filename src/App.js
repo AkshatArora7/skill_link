@@ -9,6 +9,7 @@ import Booking from "./screens/Booking/Booking";
 import ErrorPage from "./components/ErrorPage/ErrorPage"
 import Profile from "./screens/Profile/Profile";
 import History from "./screens/History/History";
+import Review from "./screens/Review/Review";
 
 function App() {
   return (
@@ -25,6 +26,10 @@ function App() {
             <Route path="/bookings" element={<Booking />} />
             <Route path="/history" element={<History />} />
             <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/review/:bookingId"
+              element={<Review />}
+            />
           </Route>
 
           <Route path="*" element={<ErrorPage />} />

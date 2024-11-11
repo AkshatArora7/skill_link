@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/NavBar/NavBar';
+import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../firebaseConfig';
 import { FaCalendarAlt, FaReceipt, FaMoneyBillWave, FaUserTie, FaFileInvoiceDollar, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaPlayCircle, FaCalendarCheck } from 'react-icons/fa';
+import Loading from '../../components/Loading/Loading';
 
 const Booking = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -15,22 +18,15 @@ const Booking = () => {
           console.error("User not authenticated");
           return;
         }
-  
+
         const bookingsRef = db.collection('bookings').where('userId', '==', user.uid);
         const snapshot = await bookingsRef.get();
         const now = new Date();
-        const bookingsData = snapshot.docs
-          .map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-          .filter(booking => {
-            const bookingDate = new Date(booking.date);
-            const oneDayAgo = new Date(now);
-            oneDayAgo.setDate(now.getDate() - 1);
-            return bookingDate >= oneDayAgo;
-          });
-  
+        const bookingsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
         setBookings(bookingsData);
         setLoading(false);
       } catch (error) {
@@ -38,7 +34,7 @@ const Booking = () => {
         setLoading(false);
       }
     };
-  
+
     fetchBookings();
   }, []);
 
@@ -109,14 +105,6 @@ const Booking = () => {
     }
   };
 
-  const isOneDayBefore = (dateString) => {
-    const bookingDate = new Date(dateString);
-    const now = new Date();
-    const oneDayBefore = new Date(now);
-    oneDayBefore.setDate(now.getDate() - 1);
-    return bookingDate.toDateString() === oneDayBefore.toDateString();
-  };
-
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
       await db.collection('bookings').doc(bookingId).update({ status: newStatus });
@@ -131,7 +119,7 @@ const Booking = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-8">Loading...</div>;
+    return <Loading/>;
   }
 
   return (
@@ -186,21 +174,23 @@ const Booking = () => {
                     Thank you for your booking! If you have any questions or need to make changes, please don't hesitate to contact us.
                   </p>
                 </div>
-                {isOneDayBefore(booking.date) && (
-                  <div className="flex gap-4 mt-4">
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                      onClick={() => updateBookingStatus(booking.id, 'completed')}
-                    >
-                      Mark as Complete
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                      onClick={() => updateBookingStatus(booking.id, 'expired')}
-                    >
-                      Mark as Expired
-                    </button>
-                  </div>
+
+                {booking.status === 'active' && (
+                  <button
+                    className="bg-[#c7fdca] border border-black text-black px-4 py-2 rounded mt-4 hover:bg-[#9fffa3]"
+                    onClick={() => updateBookingStatus(booking.id, 'completed')}
+                  >
+                    Mark as Complete
+                  </button>
+                )}
+                
+                {booking.status === 'completed' && (
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-600"
+                    onClick={() => navigate(`/review/${booking.id}`)}
+                  >
+                    Add Review
+                  </button>
                 )}
               </div>
             ))}

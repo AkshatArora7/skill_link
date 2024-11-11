@@ -31,7 +31,7 @@ const Navbar = ({tab}) => {
     <nav className="bg-gray-800 p-4">
       <div className="flex items-center justify-between">
         {/* <div className="text-white text-2xl font-bold">Your Logo</div> */}
-        <img src={logo} alt="logo" className='h-10' />
+        <img src={logo} alt="logo" className='h-15 w-40' />
         
         <div className="flex space-x-5">
           {menuItems.map((item) => (
